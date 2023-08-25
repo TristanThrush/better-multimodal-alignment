@@ -64,7 +64,7 @@ Using this method, we see a very slight improvement, but not much of a change. I
 
 ## Experiment 3: No negative training samples + alternate word-order score ratios
 
-Now let's apply both experiments for much better performance! In Experiment 1, we figured out how to compute $P(T | I)$ from a CLM head of a model which doesn't need negative training pairs. But we were sad because we really wanted an approximation for $P(T, I)$. And in Experiment 2, we found that it could be even better to normalize for the independent affects of the image by using $\frac{P(T, I)}{P(T', I)}$ as the score.
+Now let's apply both Experiments 1 and 2 for much better performance! In Experiment 1, we figured out how to compute $P(T | I)$ from a CLM head of a model which doesn't need negative training pairs. But we were sad because we really wanted an approximation for $P(T, I)$. And in Experiment 2, we found that it could be even better to normalize for the independent affects of the image by using $\frac{P(T, I)}{P(T', I)}$ as the score.
 
 Even if we can't get $P(T, I)$ from the CLM head, can we at least use it to get the ratio $\frac{P(T, I)}{P(T', I)}$? Yes, with simple rules of probability, we find that it is the same as the conditional probability ratio that we can easily get from the CLM head:
 
