@@ -33,7 +33,7 @@ Given an input Image $I$, and text $T$ made from a sequence of text tokens $t_0,
 
 $P(T | I) = P(t_0, ..., t_n | I) = P(t_0 | I) P(t_1 | I, t_0) ... P(t_n | I, t_0, ..., t_{n-1})$
 
-We got that last expression from the chain rule. Notice that [BLIP](https://arxiv.org/abs/2201.12086)’s causal language modelling (CLM) pretraining objective is designed to give us the probability of the next token given the previous tokens and the image. So we can compute $P(T | I)$ directly. We can also raise this probability to the power of {-1/n} to get the perplexity of the text given the image in use cases where we need to normalize for the sequence length.
+We got that last expression from the chain rule. Notice that [BLIP](https://arxiv.org/abs/2201.12086)’s causal language modelling (CLM) pretraining objective is designed to give us the probability of the next token given the previous tokens and the image. So we can compute $P(T | I)$ directly. We can also raise this probability to the power of $-1/n$ to get the perplexity of the text given the image in use cases where we need to normalize for the sequence length.
 
 What happens if we use $P(T | I)$ from BLIP's CLM head as our ITM score instead of BLIP’s canonical ITM head? Overall, we get a better Winoground Image Score. It is still quite close to random chance, but at least there does not seem to be a bias to perform worse than random like the canonical ITM head. Results above random chance are bold.
 
