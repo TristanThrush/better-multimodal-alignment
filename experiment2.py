@@ -54,7 +54,7 @@ for example in tqdm(winoground):
     })
 
 
-print("Image Score (DistilRoBERTa + BLIP CLM Head score ratios):", compute_image_score(losses, higher_is_better=False))
+print("Image Score (DistilRoBERTa + BLIP CLM Head score ratios):", compute_image_score(clm_losses, higher_is_better=False))
 print("Image Score (DistilRoBERTa + BLIP ITM Head score ratios):", compute_image_score(itm_scores))
 print("Image Score (DistilRoBERTa + BLIP Contrastive Head score ratios):", compute_image_score(contrastive_scores))
 

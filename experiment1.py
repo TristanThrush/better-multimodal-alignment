@@ -49,7 +49,7 @@ for example in tqdm(winoground):
     })
 
 
-print("Image Score (P(T | I) from BLIP CLM Head):", compute_image_score(losses, higher_is_better=False))
+print("Image Score (P(T | I) from BLIP CLM Head):", compute_image_score(clm_losses, higher_is_better=False))
 print("Image Score (BLIP ITM Head):", compute_image_score(itm_scores))
 print("Image Score (BLIP Contrastive Head):", compute_image_score(contrastive_scores))
 
