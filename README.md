@@ -35,7 +35,7 @@ $P(T | I) = P(t_0, ..., t_n | I) = P(t_0 | I) P(t_1 | I, t_0) ... P(t_n | I, t_0
 
 We got that last expression from the chain rule. Notice that [BLIP](https://arxiv.org/abs/2201.12086)’s causal language modelling (CLM) pretraining objective is designed to give us the probability of the next token given the previous tokens and the image. So we can compute $P(T | I)$ directly. We can also raise this probability to the power of $-1/n$ to get the perplexity of the text given the image in use cases where we need to normalize for the sequence length.
 
-What happens if we use $P(T | I)$ from BLIP's CLM head as our ITM score instead of BLIP’s canonical ITM head? Overall, we get a better Winoground Image Score. It is still quite close to random chance, but at least there does not seem to be a bias to perform worse than random like the canonical ITM head. Results above random chance are bold.
+What happens if we use $P(T | I)$ from BLIP's CLM head as our ITM score instead of BLIP’s canonical ITM methods? Overall, we get a better Winoground Image Score. It is still quite close to random chance, but at least there does not seem to be a bias to perform worse than random like the canonical ITM methods. Results above random chance are bold.
 
 | Model                          | Image Score  |
 |------------------------------- | ------------ |
@@ -44,7 +44,7 @@ What happens if we use $P(T | I)$ from BLIP's CLM head as our ITM score instead 
 | BLIP ITM Head                  | 24.25        |
 | $P(T \| I)$ from BLIP CLM Head | **29.00**    |
 
-But $P(T | I)$ isn't quite what we want. For an ITM match score, we really want $P(T, I)$. The ITM head gives us an approximation of $P(T, I)$, but it is poor and relies on artificially-paired negative examples. In the Experiment 3, we will see how to extract some information about $P(T, I)$ from the CLM head of BLIP.
+But $P(T | I)$ isn't quite what we want. For an ITM match score, we really want $P(T, I)$. The normal ITM methods gives us an approximation of $P(T, I)$, but it is poor and relies on artificially-paired negative examples. In the Experiment 3, we will see how to extract some information about $P(T, I)$ from the CLM head of BLIP.
 
 ## Experiment 2: Alternate word-order score ratios
 
@@ -52,7 +52,7 @@ Another idea: Is there a way to "normalize" for the contribution that an image a
 
 How do we get a plausible alternative caption, given an initial caption, though? For this experiment, we use a small unimodal model which is less than 100M parameters: [DistilRoBERTa](https://arxiv.org/abs/1910.01108). We take many samples of two token swaps at a time and use the MLM probabilities from DistilRoBERTa to get the most probable text with an alternative token order.
 
-Using this method, we see a very slight improvement, but not much of a change. It is possible that the idea works, but the ITM head's approximation of $P(T, I)$ is so poor that we aren't getting much benefit. Stick around for Experiment 3 where we combine our two discoveries to surpass the known SOTA.
+Using this method, we see a very slight improvement, but not much of a change. It is possible that the idea works, but the ITM/Contrastive head's approximation of $P(T, I)$ is so poor that we aren't getting much benefit. Stick around for Experiment 3 where we combine our two discoveries to surpass the known SOTA.
 
 | Model                                              | Image Score  |
 |--------------------------------------------------- | ------------ |
