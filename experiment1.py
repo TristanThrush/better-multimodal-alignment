@@ -45,7 +45,7 @@ for example in tqdm(winoground):
         "c0_i0": get_contrastive_score(image_0, text_0, blip_itm_model, blip_itm_processor),
         "c0_i1": get_contrastive_score(image_1, text_0, blip_itm_model, blip_itm_processor),
         "c1_i0": get_contrastive_score(image_0, text_1, blip_itm_model, blip_itm_processor),
-        "c1_i1": get_contrateive_score(image_1, text_1, blip_itm_model, blip_itm_processor),
+        "c1_i1": get_contrastive_score(image_1, text_1, blip_itm_model, blip_itm_processor),
     })
 
 
