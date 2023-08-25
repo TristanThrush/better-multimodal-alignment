@@ -58,7 +58,7 @@ Another idea: Is there a way to "normalize" for the contribution that an image a
 
 How do we get a plausible alternative caption, given an initial caption, though? For this experiment, we use a small unimodal model which is less than 100M parameters: [DistilRoBERTa](https://arxiv.org/abs/1910.01108). We take many samples of two token swaps at a time and use the MLM probabilities from DistilRoBERTa to get the most probable text with an alternative token order.
 
-Using this method, we see a big improvement in the contrastive head of BLIP, although for some reason not the ITM Head. It is possible that the ITM head's approximation of $P(T, I)$ is so poor that we aren't getting much benefit.
+Using this method, we see a big improvement in both the Contrastive and ITM heads of BLIP.
 
 | Model                                              | Image Score  |
 |--------------------------------------------------- | ------------ |
@@ -66,19 +66,19 @@ Using this method, we see a big improvement in the contrastive head of BLIP, alt
 | BLIP Contrastive Head                              | 13.50        |
 | BLIP ITM Head                                      | 24.25        |
 | DistilRoBERTa + BLIP Contrastive Head score ratios | **52.00**    |
-| DistilRoBERTa + BLIP ITM Head score ratios         | **32.75**    |
+| DistilRoBERTa + BLIP ITM Head score ratios         | 32.75    |
 | PaLI 17B ([with best known finetuning / prompting approach for Winoground](https://arxiv.org/abs/2305.10400)) | 41.50    |
 | VQ2 ([with best known finetuning / prompting approach for Winoground](https://arxiv.org/abs/2305.10400)) | 42.20 |
 
 ## Experiment 3: No negative training samples + alternate word-order score ratios
 
-Now let's apply both Experiments 1 and 2! In Experiment 1, we figured out how to compute $P(T | I)$ from a CLM head of a model which doesn't need negative training pairs. But we were sad because we really wanted an approximation for $P(T, I)$. And in Experiment 2, we found that it could be even better to normalize for the independent affects of the image by using $\frac{P(T, I)}{P(T', I)}$ as the score.
+Now let's apply both Experiments 1 and 2! In Experiment 1, we figured out how to compute $P(T | I)$ from a CLM head of a model which doesn't need negative training pairs. But we were sad because we really wanted an approximation for $P(T, I)$. And in Experiment 2, we found that it is even better to normalize for the independent affects of the image by using $\frac{P(T, I)}{P(T', I)}$ as the score.
 
 Even if we can't get $P(T, I)$ from the CLM head, can we at least use it to get the ratio $\frac{P(T, I)}{P(T', I)}$? Yes, with simple rules of probability, we find that it is the same as the conditional probability ratio that we can easily get from the CLM head:
 
 $\frac{P(T | I)}{P(T' | I)} = \frac{\frac{P(T, I)}{P(I)}}{\frac{P(T', I)}{P(I)}} = \frac{P(T, I)}{P(T', I)}$
 
-Combining the findings from Experiments 1 and 2, we get strong performance too:
+Combining the findings from Experiments 1 and 2 we beat current SOTA performance here too, and no negative training examples were required.
 
 | Model                                       | Image Score  |
 |-------------------------------------------- | ------------ |
