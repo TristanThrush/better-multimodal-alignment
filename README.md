@@ -40,7 +40,7 @@ What happens if we use $P(T | I)$ from BLIP's CLM head as our ITM score instead 
 | Model                          | Image Score  |
 |------------------------------- | ------------ |
 | Random Chance                  | 25.00        |
-| BLIP Contrastive Head          | 16.00        |
+| BLIP Contrastive Head          | 13.50        |
 | BLIP ITM Head                  | 24.25        |
 | $P(T \| I)$ from BLIP CLM Head | **29.00**    |
 
