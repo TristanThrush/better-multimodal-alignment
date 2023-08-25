@@ -39,7 +39,7 @@ def get_clm_loss(image, text, model, processor):
     return loss
 
 
-def get_blip_itm_score(image, text, model, processor):
+def get_itm_score(image, text, model, processor):
 
     inputs = processor(text=text, images=image.convert("RGB"), return_tensors="pt")
 
@@ -49,7 +49,7 @@ def get_blip_itm_score(image, text, model, processor):
     return itm_score
 
 
-def get_blip_contrastive_score(image, text, model, processor):
+def get_contrastive_score(image, text, model, processor):
 
     inputs = processor(text=text, images=image.convert("RGB"), return_tensors="pt")
 
