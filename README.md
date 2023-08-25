@@ -5,7 +5,7 @@ Using the code in this repo, we experiment with new ways to extract ITM scores f
 To follow along with this readme, install the repo first:
 
 ```
-git clone TODO
+git clone https://github.com/TristanThrush/better-multimodal-alignment.git
 pip install -r requirements.txt
 ```
 
