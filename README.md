@@ -35,7 +35,7 @@ $P(T | I) = P(t_0, ..., t_n | I) = P(t_0 | I) P(t_1 | I, t_0) ... P(t_n | I, t_0
 
 We got that last expression from the chain rule. Notice that [BLIP](https://arxiv.org/abs/2201.12086)’s causal language modelling (CLM) pretraining objective is designed to give us the probability of the next token given the previous tokens and the image. So we can compute $P(T | I)$ directly. We can also raise this probability to the power of $-1/n$ to get the perplexity of the text given the image in use cases where we need to normalize for the sequence length.
 
-What happens if we use $P(T | I)$ from BLIP's CLM head as our ITM score instead of BLIP’s canonical ITM methods? Overall, we get a better Winoground Image Score. It is still quite close to random chance, but at least there does not seem to be a bias to perform worse than random like the canonical ITM methods. Results above random chance are bold.
+What happens if we use $P(T | I)$ from BLIP's CLM head as our ITM score instead of BLIP’s canonical ITM methods? Overall, we get a better Winoground Image Score. It is still quite close to random chance, but at least there does not seem to be a bias to perform worse than random like the canonical ITM methods.
 
 | Model                          | Image Score  |
 |------------------------------- | ------------ |
@@ -56,11 +56,11 @@ Using this method, we see a very slight improvement, but not much of a change. I
 
 | Model                                              | Image Score  |
 |--------------------------------------------------- | ------------ |
-| Random Chance                                      | 25.00        |
+| Random Chance                                      | **25.00**        |
 | BLIP Contrastive Head                              | 16.00        |
 | BLIP ITM Head                                      | 24.25        |
 | DistilRoBERTa + BLIP Contrastive Head score ratios | 20.00        |
-| DistilRoBERTa + BLIP ITM Head score ratios         | 25.00        |
+| DistilRoBERTa + BLIP ITM Head score ratios         | **25.00**        |
 
 ## Experiment 3: No negative training samples + alternate word-order score ratios
 
@@ -78,8 +78,8 @@ Combining the findings from Experiments 1 and 2, we get much stronger performanc
 | BLIP Contrastive Head                       | 16.00        |
 | BLIP ITM Head                               | 24.25        |
 | DistilRoBERTa + BLIP CLM Head score ratios                                | **50.25**    |
-| PaLI 17B ([with best known finetuning / prompting approach for Winoground](https://arxiv.org/abs/2305.10400)) | **41.50**    |
-| VQ2 ([with best known finetuning / prompting approach for Winoground](https://arxiv.org/abs/2305.10400)) | **42.20** |
+| PaLI 17B ([with best known finetuning / prompting approach for Winoground](https://arxiv.org/abs/2305.10400)) | 41.50    |
+| VQ2 ([with best known finetuning / prompting approach for Winoground](https://arxiv.org/abs/2305.10400)) | 42.20 |
 
 DistilRoBERTa + BLIP CLM Head score ratios actually beats the known state of the art for the Image Score.
 
