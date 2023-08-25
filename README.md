@@ -52,25 +52,27 @@ Another idea: Is there a way to "normalize" for the contribution that an image a
 
 How do we get a plausible alternative caption, given an initial caption, though? For this experiment, we use a small unimodal model which is less than 100M parameters: [DistilRoBERTa](https://arxiv.org/abs/1910.01108). We take many samples of two token swaps at a time and use the MLM probabilities from DistilRoBERTa to get the most probable text with an alternative token order.
 
-Using this method, we see a very slight improvement, but not much of a change. It is possible that the idea works, but the ITM/Contrastive head's approximation of $P(T, I)$ is so poor that we aren't getting much benefit. Stick around for Experiment 3 where we combine our two discoveries to surpass the known SOTA.
+Using this method, we see a big improvement in the contrastive head of BLIP, although for some reason not the ITM Head. It is possible that the ITM head's approximation of $P(T, I)$ is so poor that we aren't getting much benefit.
 
 | Model                                              | Image Score  |
 |--------------------------------------------------- | ------------ |
-| Random Chance                                      | **25.00**        |
+| Random Chance                                      | 25.00        |
 | BLIP Contrastive Head                              | 16.00        |
 | BLIP ITM Head                                      | 24.25        |
-| DistilRoBERTa + BLIP Contrastive Head score ratios | 20.00        |
-| DistilRoBERTa + BLIP ITM Head score ratios         | **25.00**        |
+| DistilRoBERTa + BLIP Contrastive Head score ratios | **52.00**    |
+| DistilRoBERTa + BLIP ITM Head score ratios         | 25.00        |
+| PaLI 17B ([with best known finetuning / prompting approach for Winoground](https://arxiv.org/abs/2305.10400)) | 41.50    |
+| VQ2 ([with best known finetuning / prompting approach for Winoground](https://arxiv.org/abs/2305.10400)) | 42.20 |
 
 ## Experiment 3: No negative training samples + alternate word-order score ratios
 
-Now let's apply both Experiments 1 and 2 for much better performance! In Experiment 1, we figured out how to compute $P(T | I)$ from a CLM head of a model which doesn't need negative training pairs. But we were sad because we really wanted an approximation for $P(T, I)$. And in Experiment 2, we found that it could be even better to normalize for the independent affects of the image by using $\frac{P(T, I)}{P(T', I)}$ as the score.
+Now let's apply both Experiments 1 and 2! In Experiment 1, we figured out how to compute $P(T | I)$ from a CLM head of a model which doesn't need negative training pairs. But we were sad because we really wanted an approximation for $P(T, I)$. And in Experiment 2, we found that it could be even better to normalize for the independent affects of the image by using $\frac{P(T, I)}{P(T', I)}$ as the score.
 
 Even if we can't get $P(T, I)$ from the CLM head, can we at least use it to get the ratio $\frac{P(T, I)}{P(T', I)}$? Yes, with simple rules of probability, we find that it is the same as the conditional probability ratio that we can easily get from the CLM head:
 
 $\frac{P(T | I)}{P(T' | I)} = \frac{\frac{P(T, I)}{P(I)}}{\frac{P(T', I)}{P(I)}} = \frac{P(T, I)}{P(T', I)}$
 
-Combining the findings from Experiments 1 and 2, we get much stronger performance:
+Combining the findings from Experiments 1 and 2, we get much strong performance too:
 
 | Model                                       | Image Score  |
 |-------------------------------------------- | ------------ |
@@ -81,6 +83,8 @@ Combining the findings from Experiments 1 and 2, we get much stronger performanc
 | PaLI 17B ([with best known finetuning / prompting approach for Winoground](https://arxiv.org/abs/2305.10400)) | 41.50    |
 | VQ2 ([with best known finetuning / prompting approach for Winoground](https://arxiv.org/abs/2305.10400)) | 42.20 |
 
-DistilRoBERTa + BLIP CLM Head score ratios actually beats the known state of the art for the Image Score.
+## Conclusion
+
+We've provided two approaches that beat the current state of the art for the Winoground image score, and one of them does not require negative training examples at all.
 
 Will this approach scale to real-world retrieval? It is unclear - we need to go beyond these fun little experiments. The score ratios idea might only work well when we are retrieving from a set of images which already have the right objects in them, but possibly the wrong relationships between the objects. In this case, it might work well as a way to re-rank the top retrieved images from a database, but not as a full retrieval score by itself.
