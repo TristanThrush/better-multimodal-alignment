@@ -104,4 +104,5 @@ Will this approach scale to real-world retrieval? It is unclear - we need to go 
   title = {Better multimodal alignment scores: A few experiments},
   url = {https://github.com/TristanThrush/better-multimodal-alignment},
   year = {2023},
+}
 ```
