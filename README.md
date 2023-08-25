@@ -72,7 +72,7 @@ Even if we can't get $P(T, I)$ from the CLM head, can we at least use it to get 
 
 $\frac{P(T | I)}{P(T' | I)} = \frac{\frac{P(T, I)}{P(I)}}{\frac{P(T', I)}{P(I)}} = \frac{P(T, I)}{P(T', I)}$
 
-Combining the findings from Experiments 1 and 2, we get much strong performance too:
+Combining the findings from Experiments 1 and 2, we get strong performance too:
 
 | Model                                       | Image Score  |
 |-------------------------------------------- | ------------ |
