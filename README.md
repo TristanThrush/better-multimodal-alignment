@@ -94,3 +94,14 @@ Combining the findings from Experiments 1 and 2 we beat current SOTA performance
 We've provided two approaches that beat the current state of the art for the Winoground image score, and one of them does not require negative training examples at all.
 
 Will this approach scale to real-world retrieval? It is unclear - we need to go beyond these fun little experiments. The score ratios idea might only work well when we are retrieving from a set of images which already have the right objects in them, but possibly the wrong relationships between the objects. In this case, it might work well as a way to re-rank the top retrieved images from a database, but not as a full retrieval score by itself.
+
+
+## Citation
+
+```
+@misc{thrush2023bettermultimodalalignment,
+  author = {Tristan Thrush and Chris Potts and Douwe Kiela},
+  title = {Better multimodal alignment scores: A few experiments},
+  url = {https://github.com/TristanThrush/better-multimodal-alignment},
+  year = {2023},
+```
