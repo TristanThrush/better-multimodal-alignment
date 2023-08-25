@@ -1,6 +1,6 @@
 # Better multimodal alignment scores: A few experiments
 
-Using the code in this repo, we experiment with new ways to extract ITM scores from existing models. With the code, you can find that a model with only a few hundred million parameters gets above the current state of the art on the Winoground Image metric. It surpasses [Google's 17B PaLI](https://arxiv.org/abs/2209.06794) by 8.75 points, even in the most unfair comparison setting ([where the PaLI has been finetuned / prompted to do well at Winoground](https://arxiv.org/abs/2305.10400)).
+Using the code in this repo, we experiment with new ways to extract ITM scores from existing models. With the code, you can find that a model with only a few hundred million parameters gets above the current state of the art on the Winoground Image metric. It surpasses [Google's 17B PaLI](https://arxiv.org/abs/2209.06794) by 8.75 points, even in the most difficult comparison setting ([where the PaLI has been finetuned / prompted to do well at Winoground](https://arxiv.org/abs/2305.10400)).
 
 To follow along with this readme, install the repo first:
 
