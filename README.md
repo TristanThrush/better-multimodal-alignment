@@ -9,7 +9,7 @@ git clone https://github.com/TristanThrush/better-multimodal-alignment.git
 pip install -r requirements.txt
 ```
 
-You also need to request access to Winoground [here](https://huggingface.co/datasets/facebook/winoground) and then login to your account via your command line:
+You also need to click for access to Winoground [here](https://huggingface.co/datasets/facebook/winoground) and then login to your Hugging Face account via your command line:
 
 ```
 huggingface-cli login
