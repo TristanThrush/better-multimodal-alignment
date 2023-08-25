@@ -9,6 +9,12 @@ git clone https://github.com/TristanThrush/better-multimodal-alignment.git
 pip install -r requirements.txt
 ```
 
+You also need to request access to Winoground [here](https://huggingface.co/datasets/facebook/winoground) and then login to your account via your command line:
+
+```
+huggingface-cli login
+```
+
 Then run the experiment that you are interested in, for example:
 
 ```
@@ -27,7 +33,7 @@ Popular ITM models tend to know that there is a mug and grass in both images. Bu
 
 ## Experiment 1: Image-conditioned perplexity (no negative training samples needed!)
 
-To learn that an image and text match, ITM models are typically trained with image-caption pairs scraped from the internet. To learn that an image and text don’t match, ITM models are given negative examples. The negatives are usually [randomly paired images and captions](https://arxiv.org/abs/2103.00020) from the same internet dataset, but sometimes more [sophisticated methods](https://arxiv.org/abs/2201.12086) are used. With this standard ITM approach, we would need negative training examples like “grass in mug” versus “mug in grass” paired with the corresponding wrong images above. This would occur extremely infrequently. And generating negative pairs of any kind is a sort of modeling or data augmentation decision that does not come from the natural dataset itself. Luckily, we can extract an ITM score in a way that does not require training with these artificial negative pairings at all.
+To learn that an image and text match, ITM models are typically trained with image-caption pairs scraped from the internet. To learn that an image and text don’t match, ITM models are given negative examples. The negatives are usually [randomly paired images and captions](https://arxiv.org/abs/2103.00020) from the same internet dataset, but sometimes more [sophisticated methods](https://arxiv.org/abs/2201.12086) are used - for example BLIP actually tries to use "hard" negatives. With this standard ITM approach, we would need negative training examples like “grass in mug” versus “mug in grass” paired with the corresponding wrong images above. This would occur infrequently. Also, generating negative pairs of any kind is a sort of modeling or data augmentation decision that does not come from the natural dataset itself. Luckily, we can extract an ITM score in a way that does not require training with these artificial negative pairings at all.
 
 Given an input Image $I$, and text $T$ made from a sequence of text tokens $t_0,...,t_n$, the probability of the text given the image is:
 
@@ -57,10 +63,10 @@ Using this method, we see a big improvement in the contrastive head of BLIP, alt
 | Model                                              | Image Score  |
 |--------------------------------------------------- | ------------ |
 | Random Chance                                      | 25.00        |
-| BLIP Contrastive Head                              | 16.00        |
+| BLIP Contrastive Head                              | 13.50        |
 | BLIP ITM Head                                      | 24.25        |
 | DistilRoBERTa + BLIP Contrastive Head score ratios | **52.00**    |
-| DistilRoBERTa + BLIP ITM Head score ratios         | 25.00        |
+| DistilRoBERTa + BLIP ITM Head score ratios         | **32.75**    |
 | PaLI 17B ([with best known finetuning / prompting approach for Winoground](https://arxiv.org/abs/2305.10400)) | 41.50    |
 | VQ2 ([with best known finetuning / prompting approach for Winoground](https://arxiv.org/abs/2305.10400)) | 42.20 |
 
@@ -77,7 +83,7 @@ Combining the findings from Experiments 1 and 2, we get strong performance too:
 | Model                                       | Image Score  |
 |-------------------------------------------- | ------------ |
 | Random Chance                               | 25.00        |
-| BLIP Contrastive Head                       | 16.00        |
+| BLIP Contrastive Head                       | 13.50        |
 | BLIP ITM Head                               | 24.25        |
 | DistilRoBERTa + BLIP CLM Head score ratios                                | **50.25**    |
 | PaLI 17B ([with best known finetuning / prompting approach for Winoground](https://arxiv.org/abs/2305.10400)) | 41.50    |
