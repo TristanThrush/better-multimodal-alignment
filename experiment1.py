@@ -32,7 +32,7 @@ def clip_embeddings(example):
     text_features = clip_model.get_text_features(**text_inputs)
     text_features = text_features / text_features.norm(p=2, dim=-1, keepdim=True)
 
-    image_inputs = clip_processor(images=example["image"], return_tensors="pt"))
+    image_inputs = clip_processor(images=example["image"], return_tensors="pt")
     image_inputs.to(device)
     image_features = clip_model.get_image_features(**image_inputs)
     image_features = image_features / image_features.norm(p=2, dim=-1, keepdim=True)
