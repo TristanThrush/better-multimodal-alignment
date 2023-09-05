@@ -23,11 +23,11 @@ blip_itm_model = BlipForImageTextRetrieval.from_pretrained("Salesforce/blip-itm-
 blip_itm_model.eval()
 
 winoground = load_dataset("facebook/winoground", use_auth_token=True)["test"]
-flickr30k_test = load_dataset("Tristan/flickr30k_test", use_auth_token=True)
+flickr30k_test = load_dataset("Tristan/flickr30k_test", use_auth_token=True)["test"]
 
 def clip_embeddings(example):
 
-    text_inputs = clip_processor(text=example["caption"], padding=True, return_tensors="pt")
+    text_inputs = clip_processor(text=example["caption"], padding=True, truncation=True, return_tensors="pt")
     text_inputs.to(device)
     text_features = clip_model.get_text_features(**text_inputs)
     text_features = text_features / text_features.norm(p=2, dim=-1, keepdim=True)
@@ -37,10 +37,10 @@ def clip_embeddings(example):
     image_features = clip_model.get_image_features(**image_inputs)
     image_features = image_features / image_features.norm(p=2, dim=-1, keepdim=True)
 
-    return {"image_embeds": image_features, "text_embeds": text_features}
+    return {"image_embeds": image_features.to("cpu").detach(), "text_embeds": text_features.to("cpu").detach()}
 
 def get_clip_top_images(text_embed, dataset):
-    dataset = dataset.map(lambda example: {"similarity": torch.matmul(text_embed, example["image_embed"].t()).item()})
+    dataset = dataset.map(lambda example: {"similarity": torch.matmul(text_embed, example["image_embeds"].t()).item()})
     dataset = dataset.sort("similarity", reverse=True)
     return dataset
 
@@ -53,7 +53,7 @@ if args.eval_flickr30k_ir:
     no_reranking_r1 = []
     for example in tqdm(flickr30k_test):
         ground_truth_img_id = example["img_id"]
-        for caption_idx in range(example["caption"]):
+        for caption_idx in range(len(example["caption"])):
             caption = example["caption"][caption_idx]
             text_embed = example["text_embeds"][caption_idx]
             min_clm_loss = None
