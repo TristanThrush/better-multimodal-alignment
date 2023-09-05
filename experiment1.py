@@ -26,7 +26,7 @@ winoground = load_dataset("facebook/winoground", use_auth_token=True)["test"]
 flickr30k_test = load_dataset("Tristan/flickr30k_test", use_auth_token=True)
 
 def clip_embeddings(example):
-    text_features = clip_model.get_text_features(**clip_processor(text=example["caption"], return_tensors="pt"))
+    text_features = clip_model.get_text_features(**clip_processor(text=example["caption"], padding=True, "return_tensors="pt"))
     text_features = text_features / text_features.norm(p=2, dim=-1, keepdim=True)
 
     image_features = clip_model.get_image_features(**clip_processor(images=example["image"], return_tensors="pt"))
@@ -45,6 +45,7 @@ if args.eval_flickr30k_ir:
     clm_r1 = []
     itm_r1 = []
     contrastive_r1 = []
+    no_reranking_r1 = []
     for example in tqdm(flickr30k_test):
         ground_truth_img_id = example["img_id"]
         for caption_idx in range(example["caption"]):
