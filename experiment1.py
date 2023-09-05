@@ -14,7 +14,7 @@ blip_clm_processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captio
 blip_clm_model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large").to(device)
 blip_clm_model.eval()
 
-clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32").to(device)
 clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 clip_model.eval()
 
@@ -26,12 +26,17 @@ winoground = load_dataset("facebook/winoground", use_auth_token=True)["test"]
 flickr30k_test = load_dataset("Tristan/flickr30k_test", use_auth_token=True)
 
 def clip_embeddings(example):
-    text_features = clip_model.get_text_features(**clip_processor(text=example["caption"], padding=True, "return_tensors="pt"))
+
+    text_inputs = clip_processor(text=example["caption"], padding=True, return_tensors="pt")
+    text_inputs.to(device)
+    text_features = clip_model.get_text_features(**text_inputs)
     text_features = text_features / text_features.norm(p=2, dim=-1, keepdim=True)
 
-    image_features = clip_model.get_image_features(**clip_processor(images=example["image"], return_tensors="pt"))
+    image_inputs = clip_processor(images=example["image"], return_tensors="pt"))
+    image_inputs.to(device)
+    image_features = clip_model.get_image_features(**image_inputs)
     image_features = image_features / image_features.norm(p=2, dim=-1, keepdim=True)
- 
+
     return {"image_embeds": image_features, "text_embeds": text_features}
 
 def get_clip_top_images(text_embed, dataset):
