@@ -1,5 +1,5 @@
 from tqdm import tqdm
-from transformers import BlipProcessor, BlipForConditionalGeneration, BlipForImageTextRetrieval
+from transformers import BlipProcessor, BlipForConditionalGeneration, BlipForImageTextRetrieval, CLIPModel, CLIPProcessor
 from datasets import load_dataset
 from utils import device, get_clm_loss, get_contrastive_score, get_itm_score, compute_image_score
 import argparse
@@ -13,6 +13,10 @@ args = parser.parse_args()
 blip_clm_processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
 blip_clm_model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large").to(device)
 blip_clm_model.eval()
+
+clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+clip_model.eval()
 
 blip_itm_processor = BlipProcessor.from_pretrained("Salesforce/blip-itm-large-coco")
 blip_itm_model = BlipForImageTextRetrieval.from_pretrained("Salesforce/blip-itm-large-coco").to(device)
@@ -88,21 +92,21 @@ if args.eval_winoground:
         text_1 = example["caption_1"]
 
 
-       clm_losses.append({
+        clm_losses.append({
            "id" : example["id"],
            "c0_i0": get_clm_loss(image_0, text_0, blip_clm_model, blip_clm_processor),
            "c0_i1": get_clm_loss(image_1, text_0, blip_clm_model, blip_clm_processor),
           "c1_i0": get_clm_loss(image_0, text_1, blip_clm_model, blip_clm_processor),
           "c1_i1": get_clm_loss(image_1, text_1, blip_clm_model, blip_clm_processor),
-       })
+        })
 
-       itm_scores.append({
+        itm_scores.append({
             "id" : example["id"],
              "c0_i0": get_itm_score(image_0, text_0, blip_itm_model, blip_itm_processor),
              "c0_i1": get_itm_score(image_1, text_0, blip_itm_model, blip_itm_processor),
              "c1_i0": get_itm_score(image_0, text_1, blip_itm_model, blip_itm_processor),
              "c1_i1": get_itm_score(image_1, text_1, blip_itm_model, blip_itm_processor),
-       })
+        })
 
         contrastive_scores.append({
             "id" : example["id"],
