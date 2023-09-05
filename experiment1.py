@@ -3,6 +3,7 @@ from transformers import BlipProcessor, BlipForConditionalGeneration, BlipForIma
 from datasets import load_dataset
 from utils import device, get_clm_loss, get_contrastive_score, get_itm_score, compute_image_score
 import argparse
+import torch
 import statistics
 
 parser = argparse.ArgumentParser()
@@ -40,7 +41,7 @@ def clip_embeddings(example):
     return {"image_embeds": image_features.to("cpu").detach(), "text_embeds": text_features.to("cpu").detach()}
 
 def get_clip_top_images(text_embed, dataset):
-    dataset = dataset.map(lambda example: {"similarity": torch.matmul(text_embed, example["image_embeds"].t()).item()})
+    dataset = dataset.map(lambda example: {"similarity": torch.matmul(torch.tensor(text_embed), torch.tensor(example["image_embeds"]).t()).item()})
     dataset = dataset.sort("similarity", reverse=True)
     return dataset
 
@@ -64,15 +65,15 @@ if args.eval_flickr30k_ir:
             contrastive_img_id = None
             top_5 = get_clip_top_images(text_embed, flickr30k_test).select(range(5))
             for example2 in top_5:
-                clm_loss = get_clm_loss(example2["image"], caption)
+                clm_loss = get_clm_loss(example2["image"], caption, blip_clm_model, blip_clm_processor)
                 if min_clm_loss is None or min_clm_loss > clm_loss:
                     min_clm_loss = clm_loss
                     clm_img_id = example2["img_id"]
-                itm_score = get_itm_score(example2["image"], caption)
+                itm_score = get_itm_score(example2["image"], caption, blip_itm_model, blip_itm_processor)
                 if max_itm_score is None or max_itm_score < itm_score:
                     max_itm_score = itm_score
                     itm_img_id = example2["img_id"]
-                contrastive_score = get_contrastive_score(example2["image"], caption)
+                contrastive_score = get_contrastive_score(example2["image"], caption, blip_itm_model, blip_itm_processor)
                 if max_contrastive_score is None or max_contrastive_score < contrastive_score:
                     max_contrastive_score = contrastive_score
                     contrastive_img_id = example2["img_id"]
