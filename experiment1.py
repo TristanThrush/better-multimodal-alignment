@@ -80,11 +80,11 @@ if args.eval_flickr30k_ir:
             clm_r1.append(int(ground_truth_img_id == clm_img_id))
             itm_r1.append(int(ground_truth_img_id == itm_img_id))
             contrastive_r1.append(int(ground_truth_img_id == contrastive_img_id))
-            no_reranking_r1.append(int(ground_truth_img_id == top5[0]["img_id"]))
-    print("Flickr30k test R@1 with no reranking", statistics.mean(no_reranking_r1))
-    print("Flickr30k test R@1 with BLIP CLM head top 5 reranking", statistics.mean(clm_r1))
-    print("Flickr30k test R@1 with BLIP ITM head top 5 reranking", statistics.mean(itm_r1))
-    print("Flickr30k test R@1 with BLIP Contrastive head top 5 reranking", statistics.mean(contrastive_r1))
+            no_reranking_r1.append(int(ground_truth_img_id == top_5[0]["img_id"]))
+        print("Flickr30k test R@1 with no reranking", statistics.mean(no_reranking_r1))
+        print("Flickr30k test R@1 with BLIP CLM head top 5 reranking", statistics.mean(clm_r1))
+        print("Flickr30k test R@1 with BLIP ITM head top 5 reranking", statistics.mean(itm_r1))
+        print("Flickr30k test R@1 with BLIP Contrastive head top 5 reranking", statistics.mean(contrastive_r1))
 
 
 if args.eval_winoground:
