@@ -127,4 +127,4 @@ def get_most_probable_text_with_swapped_tokens(text, mlm, mlm_tokenizer, freq_fi
     probabilities = torch.nn.functional.softmax(torch.cat([l_i1_t1_and_i2_t2.unsqueeze(0), l_i2_t1_and_i1_t2.unsqueeze(0)]), dim=0)
     p_i1_t1_and_i2_t2, p_i2_t1_and_i1_t2 = probabilities[0], probabilities[1]
     highest_probability_swap_index = torch.argmax(p_i2_t1_and_i1_t2 - p_i1_t1_and_i2_t2)
-    return mlm_tokenizer.decode(configuration_batch[highest_probability_swap_index].tolist(), skip_special_tokens=True), p_i1_t1_and_i2_t2[highest_probability_swap_index] > p_i2_t1_and_i1_t2[highest_probability_swap_index]
+    return mlm_tokenizer.decode(configuration_batch[highest_probability_swap_index].tolist(), skip_special_tokens=True), p_i1_t1_and_i2_t2[highest_probability_swap_index] < p_i2_t1_and_i1_t2[highest_probability_swap_index]
