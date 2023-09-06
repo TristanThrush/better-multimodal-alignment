@@ -3,6 +3,7 @@ import numpy as np
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+
 def clip_embeddings(example, clip_model, clip_processor):
 
     text_inputs = clip_processor(text=example["caption"], padding=True, truncation=True, return_tensors="pt")
@@ -17,10 +18,12 @@ def clip_embeddings(example, clip_model, clip_processor):
 
     return {"image_embeds": image_features.to("cpu").detach(), "text_embeds": text_features.to("cpu").detach()}
 
+
 def get_clip_top_images(text_embed, dataset):
     dataset = dataset.map(lambda example: {"similarity": torch.matmul(torch.tensor(text_embed), torch.tensor(example["image_embeds"]).t()).item()})
     dataset = dataset.sort("similarity", reverse=True)
     return dataset
+
 
 def compute_image_score(results, higher_is_better=True):
 
@@ -124,4 +127,4 @@ def get_most_probable_text_with_swapped_tokens(text, mlm, mlm_tokenizer):
     probabilities = torch.nn.functional.softmax(torch.cat([l_i1_t1_and_i2_t2.unsqueeze(0), l_i2_t1_and_i1_t2.unsqueeze(0)]), dim=0)
     p_i1_t1_and_i2_t2, p_i2_t1_and_i1_t2 = probabilities[0], probabilities[1]
     highest_probability_swap_index = torch.argmax(p_i2_t1_and_i1_t2 - p_i1_t1_and_i2_t2)
-    return mlm_tokenizer.decode(configuration_batch[highest_probability_swap_index].tolist(), skip_special_tokens=True)
+    return mlm_tokenizer.decode(configuration_batch[highest_probability_swap_index].tolist(), skip_special_tokens=True), p_i1_t1_and_i2_t2[highest_probability_swap_index] > p_i2_t1_and_i1_t2[highest_probability_swap_index]
