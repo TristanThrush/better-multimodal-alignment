@@ -40,8 +40,8 @@ if args.eval_flickr30k_ir:
         ground_truth_img_id = example["img_id"]
         for caption_idx in range(len(example["caption"])):
             caption = example["caption"][caption_idx]
-            alt_caption, use_alt_caption = get_most_probable_text_with_swapped_tokens(caption, mlm, mlm_tokenizer)
-            print("use_alt_caption": use_alt_caption)
+            alt_caption, use_alt_caption = get_most_probable_text_with_swapped_tokens(caption, mlm, mlm_tokenizer, freq_filter=1000)
+            print("use_alt_caption", use_alt_caption)
             text_embed = example["text_embeds"][caption_idx]
             min_clm_loss = None
             clm_img_id = None

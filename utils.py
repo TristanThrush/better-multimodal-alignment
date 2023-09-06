@@ -81,11 +81,11 @@ def get_contrastive_score(image, text, model, processor):
     return contrastive_score
 
 
-def get_most_probable_text_with_swapped_tokens(text, mlm, mlm_tokenizer):
+def get_most_probable_text_with_swapped_tokens(text, mlm, mlm_tokenizer, freq_filter=0):
 
     encoded = mlm_tokenizer.encode(text)
     # We assume that the mlm tokenizer adds special characters to the beginning and end.
-    acceptable_tokens = set(encoded[1:-1])
+    acceptable_tokens = set(filter(lambda token: token >= freq_filter, set(encoded[1:-1])))
     acceptable_indices = list(filter(lambda index: encoded[index] in acceptable_tokens, range(len(encoded))))
     batch_size = 1000  # This is the number of swap samples we take.
     configuration_batch = [encoded.copy() for _ in range(batch_size)]
