@@ -1,7 +1,7 @@
 from tqdm import tqdm
 from transformers import BlipProcessor, BlipForConditionalGeneration, BlipForImageTextRetrieval, CLIPModel, CLIPProcessor
 from datasets import load_dataset
-from utils import device, get_clm_loss, get_contrastive_score, get_itm_score, compute_image_score
+from utils import device, get_clm_loss, get_contrastive_score, get_itm_score, compute_image_score, clip_embeddings, get_clip_top_images
 import argparse
 import torch
 import statistics
@@ -26,26 +26,7 @@ blip_itm_model.eval()
 winoground = load_dataset("facebook/winoground", use_auth_token=True)["test"]
 flickr30k_test = load_dataset("Tristan/flickr30k_test", use_auth_token=True)["test"]
 
-def clip_embeddings(example):
-
-    text_inputs = clip_processor(text=example["caption"], padding=True, truncation=True, return_tensors="pt")
-    text_inputs.to(device)
-    text_features = clip_model.get_text_features(**text_inputs)
-    text_features = text_features / text_features.norm(p=2, dim=-1, keepdim=True)
-
-    image_inputs = clip_processor(images=example["image"], return_tensors="pt")
-    image_inputs.to(device)
-    image_features = clip_model.get_image_features(**image_inputs)
-    image_features = image_features / image_features.norm(p=2, dim=-1, keepdim=True)
-
-    return {"image_embeds": image_features.to("cpu").detach(), "text_embeds": text_features.to("cpu").detach()}
-
-def get_clip_top_images(text_embed, dataset):
-    dataset = dataset.map(lambda example: {"similarity": torch.matmul(torch.tensor(text_embed), torch.tensor(example["image_embeds"]).t()).item()})
-    dataset = dataset.sort("similarity", reverse=True)
-    return dataset
-
-flickr30k_test = flickr30k_test.map(lambda example: clip_embeddings(example))
+flickr30k_test = flickr30k_test.map(lambda example: clip_embeddings(example, clip_model, clip_processor))
 
 if args.eval_flickr30k_ir:
     clm_r1 = []
@@ -81,10 +62,10 @@ if args.eval_flickr30k_ir:
             itm_r1.append(int(ground_truth_img_id == itm_img_id))
             contrastive_r1.append(int(ground_truth_img_id == contrastive_img_id))
             no_reranking_r1.append(int(ground_truth_img_id == top_5[0]["img_id"]))
-        print("Flickr30k test R@1 with no reranking", statistics.mean(no_reranking_r1))
-        print("Flickr30k test R@1 with BLIP CLM head top 5 reranking", statistics.mean(clm_r1))
-        print("Flickr30k test R@1 with BLIP ITM head top 5 reranking", statistics.mean(itm_r1))
-        print("Flickr30k test R@1 with BLIP Contrastive head top 5 reranking", statistics.mean(contrastive_r1))
+    print("Flickr30k test R@1 with no reranking", statistics.mean(no_reranking_r1))
+    print("Flickr30k test R@1 with BLIP CLM head top 5 reranking", statistics.mean(clm_r1))
+    print("Flickr30k test R@1 with BLIP ITM head top 5 reranking", statistics.mean(itm_r1))
+    print("Flickr30k test R@1 with BLIP Contrastive head top 5 reranking", statistics.mean(contrastive_r1))
 
 
 if args.eval_winoground:

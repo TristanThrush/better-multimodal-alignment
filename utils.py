@@ -3,6 +3,25 @@ import numpy as np
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+def clip_embeddings(example, clip_model, clip_processor):
+
+    text_inputs = clip_processor(text=example["caption"], padding=True, truncation=True, return_tensors="pt")
+    text_inputs.to(device)
+    text_features = clip_model.get_text_features(**text_inputs)
+    text_features = text_features / text_features.norm(p=2, dim=-1, keepdim=True)
+
+    image_inputs = clip_processor(images=example["image"], return_tensors="pt")
+    image_inputs.to(device)
+    image_features = clip_model.get_image_features(**image_inputs)
+    image_features = image_features / image_features.norm(p=2, dim=-1, keepdim=True)
+
+    return {"image_embeds": image_features.to("cpu").detach(), "text_embeds": text_features.to("cpu").detach()}
+
+def get_clip_top_images(text_embed, dataset):
+    dataset = dataset.map(lambda example: {"similarity": torch.matmul(torch.tensor(text_embed), torch.tensor(example["image_embeds"]).t()).item()})
+    dataset = dataset.sort("similarity", reverse=True)
+    return dataset
+
 def compute_image_score(results, higher_is_better=True):
 
     correct_count = 0
