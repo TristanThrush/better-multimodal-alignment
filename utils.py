@@ -20,7 +20,7 @@ def clip_embeddings(example, clip_model, clip_processor):
 
 
 def get_clip_top_images(text_embed, dataset):
-    dataset = dataset.map(lambda example: {"similarity": torch.matmul(torch.tensor(text_embed), torch.tensor(example["image_embeds"]).t()).item()})
+    dataset = dataset.map(lambda example: {"similarity": torch.matmul(torch.tensor(text_embed), torch.tensor(example["image_embeds"]).t()).item()}, num_proc=8)
     dataset = dataset.sort("similarity", reverse=True)
     return dataset
 
